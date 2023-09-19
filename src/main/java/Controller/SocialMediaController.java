@@ -29,7 +29,7 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.post("/register", this::postNewAccountHandler);
-        app.get("example-endpoint", this::exampleHandler);
+        app.post("/login", this::postLoginHandler);
 
         return app;
     }
@@ -43,6 +43,10 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
+    /** 
+    * This is the endpoint handler that adds a new account to the database 
+    * @param context 
+    */
     private void postNewAccountHandler(Context ctx) throws JsonProcessingException 
     {
         ObjectMapper mapper = new ObjectMapper();
@@ -52,11 +56,31 @@ public class SocialMediaController {
         if(addedUser != null)
         {
             ctx.json(mapper.writeValueAsString(addedUser));
-            ctx.status(200);
+            // ctx.status(200);
         }
         else
         {
             ctx.status(400);
+        }
+    }
+
+    /** 
+    * This is the endpoint handler that gets an account if it exists 
+    * @param context 
+    */
+    private void postLoginHandler(Context ctx) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        Account user = mapper.readValue(ctx.body(), Account.class);
+        Account userLogin = smService.getAccount(user);
+
+        if(userLogin != null)
+        {
+            ctx.json(mapper.writeValueAsString(userLogin));
+        }
+        else
+        {
+            ctx.status(401);
         }
     }
 

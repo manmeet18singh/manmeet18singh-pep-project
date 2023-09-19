@@ -1,7 +1,5 @@
 package Service;
 
-import java.util.HashMap;
-
 import DAO.SocialMediaDAO;
 import Model.Account;
 
@@ -18,18 +16,19 @@ public class SocialMediaService {
         this.socialMediaDao = smDao;
     }
 
-    public HashMap<String, Account> getAllUsernames()
-    {
-        return socialMediaDao.getAllUsernames();
-    }
-
     public Account addAccount(Account account)
     {
-        // Check if username is not blank, password is longer than 4 chars and username is unique
-        if (account.username != "" && account.password.length() > 4 && !getAllUsernames().containsKey(account.username))
+        // Check if username is not blank, password is longer than 4 chars
+        // We don't need to check if the username exists, as the SQL Table has a unique constraint
+        if (account.username != "" && account.password.length() > 4)
         {
             return socialMediaDao.insertAccount(account);
         }
         return null;
+    }
+
+    public Account getAccount(Account account)
+    {
+        return socialMediaDao.getAccount(account);
     }
 }
