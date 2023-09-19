@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
-import Service.SocialMediaService;
+import Model.Message;
+import Service.AccountService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -14,11 +15,11 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
-    private SocialMediaService smService ;
+    private AccountService smService ;
 
     public SocialMediaController()
     {
-        this.smService = new SocialMediaService();
+        this.smService = new AccountService();
     }
 
     /**
@@ -30,33 +31,24 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/register", this::postNewAccountHandler);
         app.post("/login", this::postLoginHandler);
-
+        app.post("/messages", this::postNewMessageHandler);
         return app;
     }
 
     /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * User Story 1: Our API should be able to process new User registrations.
+     * 
+     * @param context
      */
-    private void exampleHandler(Context context) 
-    {
-        context.json("sample text");
-    }
-
-    /** 
-    * This is the endpoint handler that adds a new account to the database 
-    * @param context 
-    */
     private void postNewAccountHandler(Context ctx) throws JsonProcessingException 
     {
         ObjectMapper mapper = new ObjectMapper();
-        Account newUser = mapper.readValue(ctx.body(), Account.class);
-        Account addedUser = smService.addAccount(newUser);
+        Account accountReceived = mapper.readValue(ctx.body(), Account.class);
+        Account accountToAdd = smService.addAccount(accountReceived);
 
-        if(addedUser != null)
+        if(accountToAdd != null)
         {
-            ctx.json(mapper.writeValueAsString(addedUser));
-            // ctx.status(200);
+            ctx.json(mapper.writeValueAsString(accountToAdd));
         }
         else
         {
@@ -64,19 +56,20 @@ public class SocialMediaController {
         }
     }
 
-    /** 
-    * This is the endpoint handler that gets an account if it exists 
-    * @param context 
-    */
+    /**
+     * User Story 2: Our API should be able to process User logins
+     * 
+     * @param context
+     */
     private void postLoginHandler(Context ctx) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        Account user = mapper.readValue(ctx.body(), Account.class);
-        Account userLogin = smService.getAccount(user);
+        Account accountReceived = mapper.readValue(ctx.body(), Account.class);
+        Account accountLogin = smService.getAccount(accountReceived);
 
-        if(userLogin != null)
+        if(accountLogin != null)
         {
-            ctx.json(mapper.writeValueAsString(userLogin));
+            ctx.json(mapper.writeValueAsString(accountLogin));
         }
         else
         {
@@ -84,5 +77,17 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * User Story 3: Our API should be able to process the creation of new messages.
+     * 
+     * @param context
+     */
+    private void postNewMessageHandler(Context ctx) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        Message messageReceived = mapper.readValue(ctx.body(), Message.class);
+        // Message messageToAdd = 
+
+    }
 
 }

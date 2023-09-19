@@ -5,7 +5,7 @@ import Util.ConnectionUtil;
 
 import java.sql.*;
 
-public class SocialMediaDAO {
+public class AccountDAO {
 
     public Account insertAccount(Account user)
     {
