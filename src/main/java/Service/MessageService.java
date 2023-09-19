@@ -33,7 +33,7 @@ public class MessageService {
 
     public Message deleteMessageById(int messageId) {
         // If the message existed, return now-deleted message. If the message did not
-        // exist, the response body should be empty.
+        // exist, the response body shoul d be empty.
 
         if (getMessageById(messageId) != null) {
             return messageDao.deleteMessageById(messageId);
