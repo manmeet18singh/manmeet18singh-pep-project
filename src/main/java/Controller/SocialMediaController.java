@@ -19,13 +19,11 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a
  * controller may be built.
  */
-public class SocialMediaController 
-{
+public class SocialMediaController {
     private AccountService accountService;
     private MessageService messageService;
 
-    public SocialMediaController() 
-    {
+    public SocialMediaController() {
         this.accountService = new AccountService();
         this.messageService = new MessageService();
     }
@@ -38,13 +36,13 @@ public class SocialMediaController
      * @return a Javalin app object which defines the behavior of the Javalin
      *         controller.
      */
-    public Javalin startAPI() 
-    {
+    public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.post("/register", this::postNewAccountHandler);
         app.post("/login", this::postLoginHandler);
         app.post("/messages", this::postNewMessageHandler);
         app.get("/messages", this::getAllMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageByIdHandler);
         return app;
     }
 
@@ -53,8 +51,7 @@ public class SocialMediaController
      * 
      * @param context
      */
-    private void postNewAccountHandler(Context ctx) throws JsonProcessingException 
-    {
+    private void postNewAccountHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account accountReceived = mapper.readValue(ctx.body(), Account.class);
         Account accountToAdd = accountService.addAccount(accountReceived);
@@ -71,8 +68,7 @@ public class SocialMediaController
      * 
      * @param context
      */
-    private void postLoginHandler(Context ctx) throws JsonProcessingException 
-    {
+    private void postLoginHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account accountReceived = mapper.readValue(ctx.body(), Account.class);
         Account accountLogin = accountService.getAccount(accountReceived);
@@ -89,8 +85,7 @@ public class SocialMediaController
      * 
      * @param context
      */
-    private void postNewMessageHandler(Context ctx) throws JsonProcessingException 
-    {
+    private void postNewMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message messageReceived = mapper.readValue(ctx.body(), Message.class);
         // check if account user exists
@@ -110,10 +105,25 @@ public class SocialMediaController
      * 
      * @param context
      */
-    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException 
-    {
+    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
+    }
+
+    /**
+     * User Story 5: Our API should be able to retrieve a message by its ID.
+     * 
+     * @param context
+     */
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.getMessageById(messageId);
+
+        if (message != null) {
+            ctx.json(message);
+        } else {
+            ctx.status(200);
+        }
     }
 
 }
