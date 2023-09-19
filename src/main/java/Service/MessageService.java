@@ -1,10 +1,12 @@
 package Service;
 
+import java.util.List;
+
 import DAO.MessageDAO;
 import Model.Message;
 
 public class MessageService {
-        private MessageDAO messageDao;
+    private MessageDAO messageDao;
 
     public MessageService() {
         messageDao = new MessageDAO();
@@ -15,14 +17,13 @@ public class MessageService {
     }
 
     public Message addMessage(Message message, boolean accountExists) {
-        if(message.message_text != "" && message.message_text.length() < 255 && accountExists)
-        {
+        if (message.message_text != "" && message.message_text.length() < 255 && accountExists) {
             return messageDao.insertMessage(message);
         }
         return null;
     }
 
-    public Message getMessage(Message message) {
-        return null;
+    public List<Message> getAllMessages() {
+        return messageDao.getAllMessages();
     }
 }
