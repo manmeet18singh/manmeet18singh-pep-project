@@ -167,7 +167,7 @@ public class SocialMediaController {
     }
 
     /**
-     * User Story 8: Our API should be able to retrieve all messages written by a particular user.
+     * User Story 8: Our API should be able to retrieve all messages written by a particular  user.
      * 
      * @param context
      */
