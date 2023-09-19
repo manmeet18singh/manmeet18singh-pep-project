@@ -45,6 +45,8 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageByIdHandler);
         app.delete("messages/{message_id}", this::deleteMessageByIdHandler);
         app.patch("messages/{message_id}", this::patchMessageByIdHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountIdHandler);
+        
         return app;
     }
 
@@ -164,4 +166,14 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * User Story 8: Our API should be able to retrieve all messages written by a particular user.
+     * 
+     * @param context
+     */
+    private void getAllMessagesByAccountIdHandler(Context ctx) throws JsonProcessingException {
+        int accountId = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> messages = messageService.getAllMessagesByAccountId(accountId);
+        ctx.json(messages);
+    }
 }
