@@ -27,8 +27,18 @@ public class MessageService {
         return messageDao.getAllMessages();
     }
 
-    public Message getMessageById(int messageId)
-    {
+    public Message getMessageById(int messageId) {
         return messageDao.getMessageById(messageId);
+    }
+
+    public Message deleteMessageById(int messageId) {
+        // If the message existed, return now-deleted message. If the message did not
+        // exist, the response body should be empty.
+
+        if (getMessageById(messageId) != null) {
+            return messageDao.deleteMessageById(messageId);
+        } else {
+            return null;
+        }
     }
 }

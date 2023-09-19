@@ -43,6 +43,7 @@ public class SocialMediaController {
         app.post("/messages", this::postNewMessageHandler);
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageByIdHandler);
+        app.delete("messages/{message_id}", this::deleteMessageByIdHandler);
         return app;
     }
 
@@ -93,7 +94,9 @@ public class SocialMediaController {
         Message messageToAdd = messageService.addMessage(messageReceived, accountExists);
 
         if (messageToAdd != null) {
-            ctx.json(mapper.writeValueAsString(messageToAdd));
+            // ctx.json(mapper.writeValueAsString(messageToAdd));
+            ctx.json(messageToAdd);
+
         } else {
             ctx.status(400);
         }
@@ -118,6 +121,23 @@ public class SocialMediaController {
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
         Message message = messageService.getMessageById(messageId);
+
+        if (message != null) {
+            ctx.json(message);
+        } else {
+            ctx.status(200);
+        }
+    }
+
+    /**
+     * User Story 6: Our API should be able to delete a message identified by a
+     * message ID.
+     * 
+     * @param context
+     */
+    private void deleteMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.deleteMessageById(messageId);
 
         if (message != null) {
             ctx.json(message);

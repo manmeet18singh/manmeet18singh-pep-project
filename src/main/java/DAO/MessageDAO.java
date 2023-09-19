@@ -25,7 +25,9 @@ public class MessageDAO {
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
 
             if (pkeyResultSet.next()) {
-                return new Message(message.getPosted_by(), message.getMessage_text(),
+
+                int generatedUserId = (int) pkeyResultSet.getLong(1);
+                return new Message(generatedUserId, message.getPosted_by(), message.getMessage_text(),
                         message.getTime_posted_epoch());
             }
         } catch (SQLException e) {
@@ -68,14 +70,37 @@ public class MessageDAO {
 
             ResultSet rs = preparedStatement.executeQuery();
 
-            while (rs.next()) {
-                return  new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
+            if (rs.next()) {
+                return new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
                         rs.getString("message_text"), rs.getLong("time_posted_epoch"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        
+
+        return null;
+    }
+
+    public Message deleteMessageById(int messageId) {
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+
+            Message returnMessage = getMessageById(messageId);
+
+            String sql = "DELETE FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, messageId);
+
+            preparedStatement.executeUpdate();
+
+            return returnMessage;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
         return null;
     }
 

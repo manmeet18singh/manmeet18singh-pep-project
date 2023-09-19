@@ -43,7 +43,8 @@ public class AccountDAO {
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
 
             if (pkeyResultSet.next()) {
-                return new Account(user.getUsername(), user.getPassword());
+                int generatedUserId = (int) pkeyResultSet.getLong(1);
+                return new Account(generatedUserId, user.getUsername(), user.getPassword());
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
