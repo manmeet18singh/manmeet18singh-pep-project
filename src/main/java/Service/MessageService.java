@@ -41,4 +41,12 @@ public class MessageService {
             return null;
         }
     }
+
+    public Message patchMessageById(int messageId, Message message) {
+
+        if (message.message_text != "" && message.message_text.length() < 255 && getMessageById(messageId) != null) {
+            return messageDao.patchMessageById(messageId, message);
+        }
+        return null;
+    }
 }

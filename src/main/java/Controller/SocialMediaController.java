@@ -44,6 +44,7 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageByIdHandler);
         app.delete("messages/{message_id}", this::deleteMessageByIdHandler);
+        app.patch("messages/{message_id}", this::patchMessageByIdHandler);
         return app;
     }
 
@@ -94,13 +95,10 @@ public class SocialMediaController {
         Message messageToAdd = messageService.addMessage(messageReceived, accountExists);
 
         if (messageToAdd != null) {
-            // ctx.json(mapper.writeValueAsString(messageToAdd));
             ctx.json(messageToAdd);
-
         } else {
             ctx.status(400);
         }
-
     }
 
     /**
@@ -143,6 +141,26 @@ public class SocialMediaController {
             ctx.json(message);
         } else {
             ctx.status(200);
+        }
+    }
+
+    /**
+     * User Story 7: Our API should be able to update a message text identified by a
+     * message ID.
+     * 
+     * @param context
+     */
+    private void patchMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        ObjectMapper mapper = new ObjectMapper();
+        Message messageReceived = mapper.readValue(ctx.body(), Message.class);
+        
+        Message messageToAdd = messageService.patchMessageById(messageId, messageReceived);
+
+        if (messageToAdd != null) {
+            ctx.json(messageToAdd);
+        } else {
+            ctx.status(400);
         }
     }
 
