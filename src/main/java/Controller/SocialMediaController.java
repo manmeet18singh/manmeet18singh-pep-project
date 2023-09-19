@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -15,11 +16,13 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
-    private AccountService smService ;
+    private AccountService accountService;
+    private MessageService messageService;
 
     public SocialMediaController()
     {
-        this.smService = new AccountService();
+        this.accountService = new AccountService();
+        this.messageService = new MessageService();
     }
 
     /**
@@ -44,7 +47,7 @@ public class SocialMediaController {
     {
         ObjectMapper mapper = new ObjectMapper();
         Account accountReceived = mapper.readValue(ctx.body(), Account.class);
-        Account accountToAdd = smService.addAccount(accountReceived);
+        Account accountToAdd = accountService.addAccount(accountReceived);
 
         if(accountToAdd != null)
         {
@@ -65,7 +68,7 @@ public class SocialMediaController {
     {
         ObjectMapper mapper = new ObjectMapper();
         Account accountReceived = mapper.readValue(ctx.body(), Account.class);
-        Account accountLogin = smService.getAccount(accountReceived);
+        Account accountLogin = accountService.getAccount(accountReceived);
 
         if(accountLogin != null)
         {
@@ -86,7 +89,18 @@ public class SocialMediaController {
     {
         ObjectMapper mapper = new ObjectMapper();
         Message messageReceived = mapper.readValue(ctx.body(), Message.class);
-        // Message messageToAdd = 
+        //check if account user exists
+        boolean accountExists = accountService.doesAccountIdExist(messageReceived.posted_by);
+        Message messageToAdd = messageService.addMessage(messageReceived, accountExists);
+
+        if(messageToAdd != null)
+        {
+            ctx.json(mapper.writeValueAsString(messageToAdd));
+        }
+        else
+        {
+            ctx.status(400);
+        }
 
     }
 

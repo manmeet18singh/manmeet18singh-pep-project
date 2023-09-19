@@ -4,14 +4,18 @@ import DAO.AccountDAO;
 import Model.Account;
 
 public class AccountService {
-    private AccountDAO socialMediaDao;
+    private AccountDAO accountDao;
 
     public AccountService() {
-        socialMediaDao = new AccountDAO();
+        accountDao = new AccountDAO();
     }
 
     public AccountService(AccountDAO smDao) {
-        this.socialMediaDao = smDao;
+        this.accountDao = smDao;
+    }
+
+    public boolean doesAccountIdExist(int accountId) {
+        return accountDao.doesAccountIdExist(accountId);
     }
 
     public Account addAccount(Account account) {
@@ -19,13 +23,13 @@ public class AccountService {
         // We don't need to check if the username exists, as the SQL Table has a unique
         // constraint
         if (account.username != "" && account.password.length() > 4) {
-            return socialMediaDao.insertAccount(account);
+            return accountDao.insertAccount(account);
         }
         return null;
     }
 
     public Account getAccount(Account account) {
-        return socialMediaDao.getAccount(account);
+        return accountDao.getAccount(account);
     }
 
 }
